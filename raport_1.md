@@ -14,6 +14,7 @@ stałej długości $L$ w stanie ON.
 Każdy węzeł sieciowy modelujemy jako nieskończoną kolejkę FIFO, każdy ma
 podłączoną dowolną liczbę źródeł ruchu.
 
+### Wartości teoretyczne
 Liczba pakietów w stanie ON jest opisywana rozkładem geometrycznym o funkcji
 rozkładu prawdopodobieństwa:
 $$
@@ -45,10 +46,10 @@ $$
 t_{OFFavg} = \frac{1}{\lambda}
 $$
 
-Dla uproszczenia, można posłużyć się podobnym rozkładem geometrycznym dla
-długości stanu OFF, tylko w odróżnieniu od stanu ON, nie symulujemy wysyłania
-pakietów, a jedynie uwzględniamy interwał pomiędzy kolejnymi iteracjami tego
-stanu, czyli de facto bezczynnością.
+W tym projekcie, dla uproszczenia posłużymy się analogicznym rozkładem
+geometrycznym dla długości stanu OFF, tylko w odróżnieniu od stanu ON, nie
+symulujemy wysyłania pakietów, a jedynie uwzględniamy interwał pomiędzy
+kolejnymi iteracjami tego stanu, czyli de facto bezczynnością.
 $$
 t_{OFFavg} = \frac{1}{p_{OFF}} \cdot t_{int}
 $$
@@ -63,7 +64,30 @@ $$
 BR_{avg} = \frac{n_{b}}{t_{ON\,OFF\,avg}} = \frac{L p_{ON} p_{OFF}}{t_{int} p_{ON} (p_{ON} + p_{OFF})}
 $$
 
-Badane metryki pomiarowe:
+Zatem średnia szybkość napływu pakietów:
+$$
+\frac{1}{\lambda} = \frac{BR_{avg}}{L} = \frac{p_{ON} p_{OFF}}{t_{int} p_{ON} (p_{ON} + p_{OFF})}
+$$
+
+Więc przewidywany czas pomiędzy pakietami to:
+$$
+\lambda = \frac{t_{int} p_{ON} (p_{ON} + p_{OFF})}{p_{ON} p_{OFF}}
+$$
+
+Z racji że czas obsługi jednego pakietu jest stały ze względu na jego
+stałą szerokość, średni czas obsługi jest taki sam i wynosi $\mu$.
+
+Średnie obciążenie systemu:
+$$
+\rho = \frac{\lambda}{\mu} = \frac{t_{int} p_{ON} (p_{ON} + p_{OFF})}{p_{ON} p_{OFF} \mu}
+$$
+
+Prawdopodobieństwo, że w kolejce jest $n$ pakietów, ma rozkład geometryczny:
+$$
+P_n = (1 - \rho)\rho^n = \mathrm{Geo}(1 - \rho)
+$$
+
+### Badane metryki pomiarowe
 
 - średnia liczba pakietów w kolejce $l_{queue}$
 - średni czas oczekiwania w kolejce $t_{wait}$
@@ -85,35 +109,48 @@ nadawca -> kolejka z serwerem <-  odbiorca
 nadawca /                       \ odbiorca
 ```
 
-Automat przedstawiający nadawcę ON/OFF
+### Automat przedstawiający nadawcę ON/OFF
+
+![Automat przedstawiający nadawcę ON/OFF](automat_on_off.png)
 
 Jeden stan będzie trwał T (np. 0.01s)
 
-![](mops_choose_state_algorithm.png)
-
-
+### Poglądowa implementacja takiego automatu
 ```python
 import numpy as np
-import random
+import time
 
-T = 0.01  # stan trwa 0.01s
 
-def choose_state():
-    if bool(random.getrandbits(1)):
-        send()
-    else:
-        idle()
+def idle(iterations, T):
+    for i in range(iterations):
+        print(f'Idle {i+1}/{iterations}')
+        time.sleep(T)
 
-def send():
-    duration = np.random.exponential(scale=1)
-    iterations = int(1/T * duration)
-    for iterations:
+
+def send(iterations, T):
+    for i in range(iterations):
         # send data
-        sleep(T)
+        print(f'Sent packet {i+1}/{iterations}')
+        time.sleep(T)
 
-def idle():
-    duration = np.random.exponential(scale=1)
-    iterations = int(1/T * duration)
-    for iterations:
-        sleep(T)
+
+def main():
+    T = 0.1  # state duration: 0.1s
+    p_off = 0.7
+    p_on = 0.3
+    current_time = time.time_ns()
+    end_time = current_time + 3e9  # simulation duration: 3s
+
+    while current_time < end_time:
+        off_iterations = np.random.geometric(p_off)
+        idle(off_iterations, T)
+
+        on_iterations = np.random.geometric(p_on)
+        send(on_iterations, T)
+
+        current_time = time.time_ns()
+
+
+if __name__ == "__main__":
+    main()
 ```
