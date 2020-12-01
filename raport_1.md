@@ -31,7 +31,7 @@ $$
 t_{ONavg} = \frac{t_{int}}{p_{ON}} + t_{prog}
 $$
 gdzie $t_{prog}$ to dodatkowy czas wprowadzany przez ograniczenia narzędzi
-programistycznych, implementacji i sprzętu, który dla uproszczenia pominiemy.
+programistycznych, implementacji i sprzętu, który ze względu na małą wartość dla uproszczenia pominiemy.
 
 Średnia liczba bitów wysłanych przez źródło podczas jednego stanu ON wynosi:
 $$
@@ -89,27 +89,27 @@ $$
 
 ### Badane metryki pomiarowe
 
-- średnia liczba pakietów w kolejce $l_{queue}$
-- średni czas oczekiwania w kolejce $t_{wait}$
-- średnie opóźnienie przekazu pakietu, definiowane jako średnia suma czasu
+- Średnia liczba pakietów w kolejce $l_{queue}$,
+- średni czas oczekiwania w kolejce $t_{wait}$,
+- średnie opóźnienie przekazu pakietu, definiowane jako średnia suma czasu,
   oczekiwania w kolejce oraz czasu odebrania całego pakietu przez węzeł
   sieciowy. Jako że długość pakietu jest stała i wynosi L, czas odebrania
-  pakietu przez węzeł również będzie stały $t_{delay} = t_{wait} + T_{receive}$
-- średnie obciążenie serwera
+  pakietu przez węzeł również będzie stały $t_{delay} = t_{wait} + T_{receive}$,
+- średnie obciążenie serwera.
 
 Przedstawiony model zaimplementujemy w języku programowania Python.
 
-## Scenariusz i algorytmy
+## Scenariusze
 
-```
-napływ klientów -> kolejka -> serwer
+- Scenariusz I - jeden węzeł sieciowy obsługujący N klientów 
 
-nadawca \                       / odbiorca
-nadawca -> kolejka z serwerem <-  odbiorca
-nadawca /                       \ odbiorca
-```
+![Scenariusz I](scenario_1.png)
 
-### Automat przedstawiający nadawcę ON/OFF
+- Scenariusz II - system dwóch węzłów sieciowych połączonych wąskim gardłem obsługujących odpowiednio N i K klientów
+
+![Scenariusz II](scenario_2.png)
+
+## Automat przedstawiający nadawcę ON/OFF
 
 ![Automat przedstawiający nadawcę ON/OFF](automat_on_off.png)
 
@@ -190,3 +190,18 @@ Sent packet 1/3
 Sent packet 2/3
 Sent packet 3/3
 ```
+
+## Uproszczenia przyjęte w projekcie
+- Nie tworzymy nowego procesu dla każdego klienta, ponieważ nie mamy na celu symulować realnej komunikacji klient-serwer; zamiast tego będziemy agregować teoretyczną ilość danych wysyłanych przez klienty znajdujące się w stanie OFF.
+- Z racji tego, że zakładana kolejka K jest nieskończona, za stracone uznawać powinniśmy tylko pakiety, które nie zostały odebrane. W projekcie nie symulujemy jednak odbierania pakietów z określonym prawdopodobieństwem, więc poziom strat pakietów, definiowany jako stosunek różnicy pakietów wysłanych i odebranych do liczby pakietów wysłanych byłby zawsze równy zero.
+- Zamiast liczyć czas, dzielimy go na określone kwanty, dzięki czemu implementacja jest analogiczna do funkcji send()
+
+
+## Źródła
+- Laboratorium sieci usługowych - pomiary w sieciach IP
+http://aai.tele.pw.edu.pl/data/SWUS/swus_lab_pomiary.pdf
+- Fragmenty materiałów wykładowych z przedmiotu Rachunek Prawdopodobieństwa PWR
+http://prac.im.pwr.wroc.pl/~wkosz/RP2012.pdf
+- Wikipedia - strony poświęcone m.in. Teorii kolejek i stronach pochodnych
+https://en.wikipedia.org/wiki/Queueing_theory
+- Wykład MOPS, ze szczególnym uwzględnieniem tematów 5 i 6
