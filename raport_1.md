@@ -7,7 +7,7 @@ Geometry: margin=2.2cm
 # Projekt MOPS
 
 ## Cele projektu
-Celem projektu jest zasymulowanie węzła lub systemu dwóch węzłów sieciowych,
+Celem projektu jest zasymulowanie systemu dwóch węzłów sieciowych,
 obsługujących $n$ źródeł ruchu typu ON-OFF, zdolnych generować pakiety o
 stałej długości $L$ w stanie ON.
 
@@ -99,16 +99,16 @@ $$
 
 Przedstawiony model zaimplementujemy w języku programowania Python.
 
-## Scenariusze
+## Scenariusz
 
-- Scenariusz I -- jeden węzeł sieciowy obsługujący N klientów (Rysunek 1)
-
-- Scenariusz II -- system dwóch węzłów sieciowych połączonych w topologii parking lot
-  obsługujących N klientów (Rysunek 2)
+  System dwóch węzłów sieciowych połączonych w topologii parking lot
+  obsługujących odpowiednio N i K klientów (Rysunek 1)
+  T1 - ruch testowy
+  #1, #2 - ruchy podkładowe
 
 ## Automat przedstawiający nadawcę ON/OFF
 
-Patrz Rysunek 3
+Patrz Rysunek 2
 Jeden stan będzie trwał T (np. 0.1s)
 
 ### Poglądowa implementacja takiego automatu
@@ -210,13 +210,9 @@ Sent packet 3/3
 
 ## Załączniki
 
-![Scenariusz I]
+![Scenariusz]
 
-[Scenariusz I]: scenario_1.png "Scenariusz I" width=240pt
-
-![Scenariusz II]
-
-[Scenariusz II]: scenario_2.png "Scenariusz II" width=360pt
+[Scenariusz]: scenario.png "Scenariusz" width=260pt
 
 ![Automat przedstawiający nadawcę ON/OFF]
 
