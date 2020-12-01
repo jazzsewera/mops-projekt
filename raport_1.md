@@ -89,17 +89,8 @@ Automat przedstawiający nadawcę ON/OFF
 
 Jeden stan będzie trwał T (np. 0.01s)
 
-```
-    (default)
-        |
- <choose_state()>
-    /       \
-  (ON)     (OFF)
-    |       |
-/send()/  /idle()/
-    \       /
-    (default)
-```
+![](mops_choose_state_algorithm.png)
+
 
 ```python
 import numpy as np
