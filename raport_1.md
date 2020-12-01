@@ -1,3 +1,9 @@
+Title: Model symulacji — raport częściowy — Projekt MOPS
+Author: Błażej Sewera, Mateusz Winnicki, Wojciech Kowalski
+Date: 1 grudnia 2020
+Language: pl
+Geometry: margin=2.2cm
+
 # Projekt MOPS
 
 ## Cele projektu
