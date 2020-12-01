@@ -103,8 +103,8 @@ Przedstawiony model zaimplementujemy w języku programowania Python.
 
 - Scenariusz I -- jeden węzeł sieciowy obsługujący N klientów (Rysunek 1)
 
-- Scenariusz II -- system dwóch węzłów sieciowych połączonych wąskim gardłem
-  obsługujących odpowiednio N i K klientów (Rysunek 2)
+- Scenariusz II -- system dwóch węzłów sieciowych połączonych w topologii parking lot
+  obsługujących N klientów (Rysunek 2)
 
 ## Automat przedstawiający nadawcę ON/OFF
 
@@ -212,11 +212,11 @@ Sent packet 3/3
 
 ![Scenariusz I]
 
-[Scenariusz I]: scenario_1.png "Scenariusz I" width=260pt
+[Scenariusz I]: scenario_1.png "Scenariusz I" width=240pt
 
 ![Scenariusz II]
 
-[Scenariusz II]: scenario_2.png "Scenariusz II" width=260pt
+[Scenariusz II]: scenario_2.png "Scenariusz II" width=360pt
 
 ![Automat przedstawiający nadawcę ON/OFF]
 
