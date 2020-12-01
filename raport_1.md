@@ -154,3 +154,39 @@ def main():
 if __name__ == "__main__":
     main()
 ```
+
+### Przykładowe działanie automatu doboru długości stanów
+Przyjęliśmy czas trwania 1 iteracji na 0.1s i czas symulacji na 3s.
+
+```
+Idle 1/1
+Sent packet 1/1
+Idle 1/2
+Idle 2/2
+Sent packet 1/1
+Idle 1/1
+Sent packet 1/12
+Sent packet 2/12
+Sent packet 3/12
+Sent packet 4/12
+Sent packet 5/12
+Sent packet 6/12
+Sent packet 7/12
+Sent packet 8/12
+Sent packet 9/12
+Sent packet 10/12
+Sent packet 11/12
+Sent packet 12/12
+Idle 1/2
+Idle 2/2
+Sent packet 1/4
+Sent packet 2/4
+Sent packet 3/4
+Sent packet 4/4
+Idle 1/1
+Sent packet 1/1
+Idle 1/1
+Sent packet 1/3
+Sent packet 2/3
+Sent packet 3/3
+```
