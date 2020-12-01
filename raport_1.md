@@ -212,7 +212,7 @@ Sent packet 3/3
 
 ![Scenariusz]
 
-[Scenariusz]: scenario.png "Scenariusz" width=260pt
+[Scenariusz]: scenario.png "Scenariusz" width=500pt
 
 ![Automat przedstawiający nadawcę ON/OFF]
 
