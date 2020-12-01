@@ -64,6 +64,7 @@ BR_{avg} = \frac{n_{b}}{t_{ON\,OFF\,avg}} = \frac{L p_{ON} p_{OFF}}{t_{int} p_{O
 $$
 
 Badane metryki pomiarowe:
+
 - średnia liczba pakietów w kolejce $l_{queue}$
 - średni czas oczekiwania w kolejce $t_{wait}$
 - średnie opóźnienie przekazu pakietu, definiowane jako średnia suma czasu
