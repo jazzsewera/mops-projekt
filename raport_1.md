@@ -101,19 +101,15 @@ Przedstawiony model zaimplementujemy w języku programowania Python.
 
 ## Scenariusze
 
-- Scenariusz I - jeden węzeł sieciowy obsługujący N klientów 
+- Scenariusz I -- jeden węzeł sieciowy obsługujący N klientów (Rysunek 1)
 
-![Scenariusz I](scenario_1.png)
-
-- Scenariusz II - system dwóch węzłów sieciowych połączonych wąskim gardłem obsługujących odpowiednio N i K klientów
-
-![Scenariusz II](scenario_2.png)
+- Scenariusz II -- system dwóch węzłów sieciowych połączonych wąskim gardłem
+  obsługujących odpowiednio N i K klientów (Rysunek 2)
 
 ## Automat przedstawiający nadawcę ON/OFF
 
-![Automat przedstawiający nadawcę ON/OFF](automat_on_off.png)
-
-Jeden stan będzie trwał T (np. 0.01s)
+Patrz Rysunek 3
+Jeden stan będzie trwał T (np. 0.1s)
 
 ### Poglądowa implementacja takiego automatu
 ```python
@@ -192,16 +188,36 @@ Sent packet 3/3
 ```
 
 ## Uproszczenia przyjęte w projekcie
-- Nie tworzymy nowego procesu dla każdego klienta, ponieważ nie mamy na celu symulować realnej komunikacji klient-serwer; zamiast tego będziemy agregować teoretyczną ilość danych wysyłanych przez klienty znajdujące się w stanie OFF.
-- Z racji tego, że zakładana kolejka K jest nieskończona, za stracone uznawać powinniśmy tylko pakiety, które nie zostały odebrane. W projekcie nie symulujemy jednak odbierania pakietów z określonym prawdopodobieństwem, więc poziom strat pakietów, definiowany jako stosunek różnicy pakietów wysłanych i odebranych do liczby pakietów wysłanych byłby zawsze równy zero.
-- Zamiast liczyć czas, dzielimy go na określone kwanty, dzięki czemu implementacja jest analogiczna do funkcji send()
+- Nie tworzymy nowego procesu dla każdego klienta, ponieważ nie mamy na celu
+  symulować realnej komunikacji klient-serwer; zamiast tego będziemy agregować
+  teoretyczną ilość danych wysyłanych przez klienty znajdujące się w stanie
+  OFF.
+- Z racji tego, że zakładana kolejka K jest nieskończona, za stracone uznawać
+  powinniśmy tylko pakiety, które nie zostały odebrane. W projekcie nie
+  symulujemy jednak odbierania pakietów z określonym prawdopodobieństwem, więc
+  poziom strat pakietów, definiowany jako stosunek różnicy pakietów wysłanych i
+  odebranych do liczby pakietów wysłanych byłby zawsze równy zero.
+- Zamiast liczyć czas, dzielimy go na określone kwanty, dzięki czemu
+  implementacja jest analogiczna do funkcji `send()`
 
 
 ## Źródła
-- Laboratorium sieci usługowych - pomiary w sieciach IP
-http://aai.tele.pw.edu.pl/data/SWUS/swus_lab_pomiary.pdf
-- Fragmenty materiałów wykładowych z przedmiotu Rachunek Prawdopodobieństwa PWR
-http://prac.im.pwr.wroc.pl/~wkosz/RP2012.pdf
-- Wikipedia - strony poświęcone m.in. Teorii kolejek i stronach pochodnych
-https://en.wikipedia.org/wiki/Queueing_theory
+- Laboratorium sieci usługowych --- pomiary w sieciach IP <http://aai.tele.pw.edu.pl/data/SWUS/swus_lab_pomiary.pdf>
+- Fragmenty materiałów wykładowych z przedmiotu Rachunek Prawdopodobieństwa PWR <http://prac.im.pwr.wroc.pl/~wkosz/RP2012.pdf>
+- Wikipedia --- strony poświęcone m.in. Teorii kolejek i stronach pochodnych <https://en.wikipedia.org/wiki/Queueing_theory>
 - Wykład MOPS, ze szczególnym uwzględnieniem tematów 5 i 6
+- Wykłady dr inż. Joanny Matysiak z przedmiotu Probabilistyka <http://mini.pw.edu.pl/~jmatysiak/>
+
+## Załączniki
+
+![Scenariusz I]
+
+[Scenariusz I]: scenario_1.png "Scenariusz I" width=260pt
+
+![Scenariusz II]
+
+[Scenariusz II]: scenario_2.png "Scenariusz II" width=260pt
+
+![Automat przedstawiający nadawcę ON/OFF]
+
+[Automat przedstawiający nadawcę ON/OFF]: automat_on_off.png "Automat przedstawiający nadawcę ON/OFF" width=260pt
