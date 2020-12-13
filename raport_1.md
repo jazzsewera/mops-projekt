@@ -82,11 +82,15 @@ parametrami wejściowymi symulacji.
   symulować realnej komunikacji klient-serwer; zamiast tego będziemy agregować
   teoretyczną ilość danych wysyłanych przez klienty znajdujące się w stanie
   ON.
-- Z racji tego, że zakładana kolejka K jest nieskończona, za stracone uznawać
+- Z racji tego, że zakładane kolejki są nieskończone, za stracone uznawać
   powinniśmy tylko pakiety, które nie zostały odebrane. W projekcie nie
   symulujemy jednak odbierania pakietów z określonym prawdopodobieństwem, więc
   poziom strat pakietów, definiowany jako stosunek różnicy pakietów wysłanych i
   odebranych do liczby pakietów wysłanych byłby zawsze równy zero.
+- Wszystkie pakiety pochodzące z konkretnego źródła ruchu, wychodzące z kolejki 
+  pierwszej, trafiają do kolejki drugiej lub nie są do niej przekazywane - nie 
+  symulujemy sytuacji, gdzie tylko część pakietów z danego źródła przechodzi
+  przez obie kolejki
 
 ## Źródła
 - Laboratorium sieci usługowych --- pomiary w sieciach IP <http://aai.tele.pw.edu.pl/data/SWUS/swus_lab_pomiary.pdf>
