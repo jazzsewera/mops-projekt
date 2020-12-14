@@ -43,6 +43,16 @@ $$
 
 Podczas tego stanu pakiety nie będą generowane.
 
+Maksymalna przepływność generowana przez jedno źródło w stanie ON:
+
+$$
+R_{max} = \frac{L}{T_p}
+$$
+
+gdzie $T_p$ to czas trwania jednego pakietu. Biorąc za przykład strumień PCM,
+możemy przyjąć $T_p = 125 \mu s$, więc przy długości $L = 8b$ będziemy mieli
+przepływność maksymalną podczas stanu ON $R_{max} = \frac{L}{T_p} = \frac{8b}{125 \mu s} = 64 \frac{kb}{s}$.
+
 ## Moduły modelu symulacyjnego
 
 - Program główny --- inicjalizuje moduły i nadzoruje ich pracę
