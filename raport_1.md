@@ -113,4 +113,12 @@ parametrami wejściowymi symulacji.
 
 ![Scenariusz]
 
-[Scenariusz]: scenario.png "Scenariusz" width=500pt
+[Scenariusz]: scenario.png "Scenariusz" width=450pt
+
+![Schemat symulacji]
+
+[Schemat symulacji]: alg1.png "Schemat symulacji" width=450pt
+
+![Algorytm obsługi pakietu]
+
+[Algorytm obsługi pakietu]: alg2.png "Algorytm obsługi pakietu" width=350pt
