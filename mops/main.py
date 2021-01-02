@@ -1,6 +1,6 @@
 import logging as log
-from mops.simulator.rand import Rand
-from mops.simulator.timer import Timer
+from simulator.rand import Rand
+from simulator.timer import Timer
 
 
 def on_state_handler():
