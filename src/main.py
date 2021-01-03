@@ -18,7 +18,7 @@ def main():
     set_generator_parameters()
     GeneratorParameters.get_packet_length()
 
-    simulation_time = 10
+    simulation_time = 50
     timer = Timer(simulation_time)
 
     generator_pool = []
