@@ -1,5 +1,4 @@
 import logging as log
-from threading import Thread
 from time import sleep
 
 from .event import Event
@@ -36,14 +35,7 @@ class Timer(object):
         log.debug(f"Confirmed listeners: {self._confirmed_listeners}")
         self._confirmed_listeners_mutex = False
 
-    def launch_timer_thread(self):
-        self._timer_event_loop = Thread(target=self._start_timer_event_loop, args=[])
-        self._timer_event_loop.start()
-
-    def join_timer_thread(self):
-        self._timer_event_loop.join()
-
-    def _start_timer_event_loop(self):
+    def start_timer_event_loop(self):
         while self.current_time < self._simulation_time:
             # TICK
             self._clock_event(self.current_time)
