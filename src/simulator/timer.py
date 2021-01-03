@@ -47,6 +47,7 @@ class Timer(object):
         while self.current_time < self._simulation_time:
             # TICK
             self._clock_event(self.current_time)
+            log.debug(f"Current clock: {self.current_time}")
             # TOCK
             while self._confirmed_listeners < self._connected_listeners:
                 sleep(0.01)  # sleep a little bit not to overwhelm processor
