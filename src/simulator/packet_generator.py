@@ -1,10 +1,10 @@
 import logging as log
 
 class PacketGenerator(object):
-    def __init__(self, packet_length, generation_time):
+    def __init__(self, packet_lenght, generation_time):
         log.debug("New packet stream created")
 
-        self._packet_length = packet_length
+        self._packet_lenght = packet_lenght
         self._generation_time = generation_time
         self._packets_buffer_arrival_times = [] # times of packets arrival in buffer
         self._time_counter = 0
