@@ -1,36 +1,35 @@
 import logging as log
-from simulator.rand import Rand
-from simulator.timer import Timer
-from simulator.state import SimulationTime
+
+from simulator.packet_generator import PacketGenerator
 from simulator.state import GeneratorParameters
+from simulator.timer import Timer
 
-
-def on_state_handler():
-    log.debug("On event fired")
-
-
-def off_state_handler():
-    log.debug("Off event fired")
 
 def set_generator_parameters():
     GeneratorParameters.set_packet_length(input("Enter packet length: "))
     GeneratorParameters.set_generation_time(input("Enter generation time: "))
     GeneratorParameters.set_streams_number(input("Enter a number of streams: "))
 
+
 def main():
     log.getLogger().setLevel(log.DEBUG)
     log.debug("Program started")
 
     set_generator_parameters()
-    GeneratorParameters.get_packet_lenght()
+    GeneratorParameters.get_packet_length()
 
-    simulation_time = 5
-    rand = Rand(0.5, 0.5)
-    timer = Timer(rand, simulation_time)
-    timer.register_on_event_handler(on_state_handler)
-    timer.register_off_event_handler(off_state_handler)
-    timer.print_on_event()
-    timer.launch_timer_threads()
+    simulation_time = 10
+    timer = Timer(simulation_time)
+
+    generator_pool = []
+
+    for _ in range(GeneratorParameters.get_streams_number()):
+        generator = PacketGenerator(timer, 1, 1)
+        timer.add_clock_event_listener(generator.generator_event_listener)
+        generator_pool.append(generator)
+
+    timer.launch_timer_thread()
+    timer.join_timer_thread()
 
 
 if __name__ == "__main__":
