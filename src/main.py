@@ -28,8 +28,7 @@ def main():
         timer.add_clock_event_listener(generator.generator_event_listener)
         generator_pool.append(generator)
 
-    timer.launch_timer_thread()
-    timer.join_timer_thread()
+    timer.start_timer_event_loop()
 
 
 if __name__ == "__main__":
