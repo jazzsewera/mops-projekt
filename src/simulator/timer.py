@@ -1,64 +1,58 @@
 import logging as log
-from .event import Event
-from .rand import Rand
 from threading import Thread
-import time
+from time import sleep
+
+from .event import Event
 
 
 class Timer(object):
-    def __init__(self, rand, simulation_time):
-        self._rand: Rand = rand
+    def __init__(self, simulation_time):
         self._simulation_time = simulation_time
+        self.current_time = 0
 
-        self._on_event = Event()
-        self._off_event = Event()
-        self._simulation_stop_event = Event()
-        self._is_simulation_running = True
+        self._clock_event = Event()
+        self._connected_listeners = 0
 
-        log.debug(f"Event object {self._on_event}")
-        log.debug(f"Self: {self}")
+        self._confirmed_listeners = 0
+        self._confirmed_listeners_mutex = False
 
-        self._simulation_stop_event.add_handler(self._set_stop_simulation_flag)
+    def add_clock_event_listener(self, listener):
+        """
+        Listeners should be methods that take one argument, e.g.
+        `listener(current_time: int)`
+        """
+        self._clock_event.add_handler(listener)
+        self._connected_listeners += 1
 
-    def register_on_event_handler(self, handler):
-        log.debug(f"Event in register on event: {self._on_event}")
-        self._on_event.add_handler(handler)
-        log.debug(f"Event in register on event: {self._on_event}")
+    def remove_clock_event_listener(self, listener):
+        self._clock_event.remove_handler(listener)
+        self._connected_listeners -= 1
 
-    def register_off_event_handler(self, handler):
-        self._off_event.add_handler(handler)
+    def confirm_clock(self):
+        while self._confirmed_listeners_mutex:
+            sleep(0.01)
+        self._confirmed_listeners_mutex = True
+        self._confirmed_listeners += 1
+        log.debug(f"Confirmed listeners: {self._confirmed_listeners}")
+        self._confirmed_listeners_mutex = False
 
-    def print_on_event(self):
-        log.debug(f"On event: {self._on_event}")
+    def launch_timer_thread(self):
+        self._timer_event_loop = Thread(target=self._start_timer_event_loop, args=[])
+        self._timer_event_loop.start()
 
-    def launch_timer_threads(self):
-        log.debug(f"Self: {self}")
-        log.debug(f"On event object: {self._on_event}")
-        log.debug(f"Off event object: {self._off_event}")
-        simulation_timer = Thread(target=self._start_simulation_timer, args=[])
-        timer_event_loop = Thread(
-            target=self._start_timer_event_loop, args=(self._on_event, self._off_event)
-        )
-        simulation_timer.start()
-        timer_event_loop.start()
-        simulation_timer.join()
-        timer_event_loop.join()
+    def join_timer_thread(self):
+        self._timer_event_loop.join()
 
-    def _set_stop_simulation_flag(self):
-        self._is_simulation_running = False
-
-    def _start_timer_event_loop(self, on_event, off_event):
-        while self._is_simulation_running:
-            time.sleep(self._rand.generate_random_on_time())
-            log.debug("Firing on event")
-            log.debug(f"Event object {on_event}")
-            on_event()
-            time.sleep(self._rand.generate_random_off_time())
-            log.debug("Firing off event")
-            log.debug(f"Event object {off_event}")
-            off_event()
-
-    def _start_simulation_timer(self):
-        time.sleep(self._simulation_time)
-        self._set_stop_simulation_flag()
-        log.debug("Simulation timer ended")
+    def _start_timer_event_loop(self):
+        while self.current_time < self._simulation_time:
+            # TICK
+            self._clock_event(self.current_time)
+            # TOCK
+            while self._confirmed_listeners < self._connected_listeners:
+                sleep(0.01)  # sleep a little bit not to overwhelm processor
+                log.debug(
+                    f"Current time: {self.current_time}. "
+                    "Some listeners did not confirm that they finished"
+                )
+            self._confirmed_listeners = 0
+            self.current_time += 1
