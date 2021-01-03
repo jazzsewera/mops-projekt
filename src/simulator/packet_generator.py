@@ -1,6 +1,7 @@
 import logging as log
 
 from simulator.timer import Timer
+from simulator.rand import Rand
 
 
 class PacketGenerator(object):
@@ -13,6 +14,7 @@ class PacketGenerator(object):
         self._off_time = 0
 
         self._timer: Timer = timer
+        self._rand = Rand(0.5, 0.3) # set lambda1 and lambda2 on start
         self._packet_length = packet_length
         self._generation_time = generation_time
         self._time_counter = 0
@@ -24,13 +26,14 @@ class PacketGenerator(object):
         if self._current_time < self._on_time_start + self._on_time:
             log.debug("Sending packet from generator")
             pass  # send event
-            self._timer.confirm_clock()
+            self._timer.confirm_clock() #oprocz tego trzeba przekazac obiekt queue. self.queue.receive_event() i tam robie self._timer.confirm_clock()
+        # jeszcze jeden if if self current time == self.ontimestart + iterator (leci od zera) i zwieksza sie o 1 co wysłany pakiet * generation time
         elif self._current_time < self._off_time_start + self._off_time:
             self._timer.confirm_clock()
         else:
             # generate next on_time and off_time
-            self._on_time = 5  # get random
-            self._off_time = 3  # get random
+            self._on_time = self._rand.generate_random_on_time()  
+            self._off_time = self._rand.generate_random_off_time()
             self._on_time_start = self._current_time
             self._off_time_start = self._current_time + self._on_time
             self.generator_event_listener(self._current_time)
