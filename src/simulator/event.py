@@ -1,5 +1,6 @@
 import logging as log
 
+
 class Event(object):
     def __init__(self):
         log.debug("[Event] __init__")
