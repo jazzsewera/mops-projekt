@@ -10,6 +10,5 @@ class Queue(object):
         self.packets = []
         self._timer: Timer = timer
 
-    def queue_packet_receiver(self, in_queue_time):
-        packet = Packet(in_queue_time)
+    def queue_packet_receiver(self, packet: Packet):
         self.packets.append(packet)
