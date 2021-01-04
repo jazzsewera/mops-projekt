@@ -1,7 +1,7 @@
 import logging as log
 
-from simulator.timer import Timer
 from simulator.packet import Packet
+from simulator.timer import Timer
 
 
 class Queue(object):
