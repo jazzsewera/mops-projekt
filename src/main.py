@@ -1,9 +1,9 @@
 import logging as log
 
 from simulator.packet_generator import PacketGenerator
+from simulator.queue import Queue
 from simulator.state import GeneratorParameters
 from simulator.timer import Timer
-from simulator.queue import Queue
 
 
 def set_generator_parameters():
@@ -26,12 +26,15 @@ def main():
     generator_pool = []
 
     for _ in range(GeneratorParameters.get_streams_number()):
-        generator = PacketGenerator(timer, queue_one, GeneratorParameters.get_packet_length(), 1)
+        generator = PacketGenerator(
+            timer, queue_one, GeneratorParameters.get_packet_length(), 1
+        )
         timer.add_clock_event_listener(generator.generator_event_listener)
         generator_pool.append(generator)
 
     timer.start_timer_event_loop()
 
+    print(queue_one.packets_number)
     print(queue_one.packets)
 
 
