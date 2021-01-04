@@ -17,16 +17,16 @@ def main():
     log.debug("Program started")
 
     set_generator_parameters()
-    GeneratorParameters.get_packet_length()
 
     simulation_time = 50
     timer = Timer(simulation_time)
-    queue_one = Queue(timer)
+    queue_one = Queue(timer, GeneratorParameters.get_packet_length())
+    timer.add_clock_event_listener(queue_one.queue_packet_listener)
 
     generator_pool = []
 
     for _ in range(GeneratorParameters.get_streams_number()):
-        generator = PacketGenerator(timer, queue_one, 1, 1)
+        generator = PacketGenerator(timer, queue_one, GeneratorParameters.get_packet_length(), 1)
         timer.add_clock_event_listener(generator.generator_event_listener)
         generator_pool.append(generator)
 
