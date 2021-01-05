@@ -28,7 +28,7 @@ class PacketGenerator(object):
         self._timer = timer
         self._event_queue = event_queue
         self._queue = queue
-        self._rand = Rand(0.5, 0.3)  # set lambda1 and lambda2 on start
+        self._rand = Rand(0.5, 3)  # set lambda1 and lambda2 on start
         self._packet_length = packet_length
         self._generation_time = generation_time
         self._time_counter = 0
@@ -52,30 +52,40 @@ class PacketGenerator(object):
         event = Event(
             True,
             event.when + self._generation_time,
-            "Packet generation",
+            event.summary,
             self._send_packet,
         )
+        self.log.warn("Sending event to queue")
         self._event_queue.add_event(event)
 
-    def generate_packet(self):
+    def generate_packet(self, event: Event):
         for i in range(math.floor(self._on_time / self._generation_time)):
-            event = Event(
+            self.log.debug(
+                f"Adding packet generation for {event.when + i * self._generation_time}"
+            )
+            self.log.debug(
+                f"event.when={event.when}, i={i}, self._generation_time={self._generation_time}"
+            )
+            _event = Event(
                 False,
-                self._timer.current_time + i * self._generation_time,
+                event.when + i * self._generation_time,
                 "Packet generation",
                 self._end_packet_generation,
             )
-            self._event_queue.add_event(event)
+            self._event_queue.add_event(_event)
 
     def _switch_state(self, event: Event):
         if self._is_state_on:
             r_time = self._rand.generate_random_off_time()
             event_summary = f"Switch generator state to OFF for {r_time:.2f}"
+            gen_packet_event = Event(
+                None, event.when, "Execute packet generator", self.generate_packet
+            )
+            self._event_queue.add_event(gen_packet_event)
         else:
             r_time = self._rand.generate_random_on_time()
             event_summary = f"Switch generator state to ON for {r_time:.2f}"
             self._on_time = r_time
-            self.generate_packet()
 
         event = Event(
             None,
