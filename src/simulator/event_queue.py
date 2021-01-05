@@ -32,8 +32,12 @@ class EventQueue(object):
         self.queue.sort(key=lambda e: e.when)
 
     def handle_event(self) -> bool:
+        if self._timer.current_time > 100:
+            log.debug("Simulation time ended")
+            return False
         if self.queue:
             event = self.queue.pop(0)
+            log.debug(f"####### {event} #######")
             if event.is_event_end:
                 self._timer.current_time = event.when
             if event.on_handle:
