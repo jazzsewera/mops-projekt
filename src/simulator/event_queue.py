@@ -36,6 +36,7 @@ class EventQueue(object):
         self.log.debug(f"ADD | {event}")
         self.queue.append(event)
         self.queue.sort(key=lambda e: e.when)
+        self.log.debug(f"event list length: {len(self.queue)}")
 
     def handle_event(self) -> bool:
         if self._timer.current_time > self._simulation_time:

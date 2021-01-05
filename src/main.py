@@ -20,6 +20,7 @@ def set_generator_parameters():
         GeneratorParameters.get_streams_number()
         <= GeneratorParameters.get_dropped_streams()
     ):
+        log = Logger(None)
         log.error(
             "The number of dropped streams has to be lower than "
             "the number of streams going into the first queue"
@@ -32,11 +33,13 @@ def main():
     log = Logger(None)
     set_generator_parameters()
 
-    simulation_time = 50.0
+    simulation_time = 10.0
     timer = Timer()
     event_queue = EventQueue(simulation_time, timer)
-    queue_two = Queue(timer, GeneratorParameters.get_packet_length())
-    queue_one = Queue(timer, GeneratorParameters.get_packet_length(), queue_two)
+    queue_two = Queue(timer, event_queue, GeneratorParameters.get_packet_length())
+    queue_one = Queue(
+        timer, event_queue, GeneratorParameters.get_packet_length(), queue_two
+    )
 
     generator_pool: List[PacketGenerator] = []
 
@@ -79,7 +82,7 @@ def main():
         generator_pool.append(generator)
 
     while event_queue.handle_event():
-        log.debug(f"Time: @{timer.current_time}")
+        log.debug(f"Time: @{timer.current_time:.2f}")
 
     log.debug("queue one data:")
     log.debug(queue_one.packets_number)
