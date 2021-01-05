@@ -21,9 +21,10 @@ def main():
 
     simulation_time = 50
     timer = Timer(simulation_time)
-    queue_one = Queue(timer, GeneratorParameters.get_packet_length())
-    queue_two = Queue(timer, GeneratorParameters.get_packet_length(), queue_one)
+    queue_two = Queue(timer, GeneratorParameters.get_packet_length())
+    queue_one = Queue(timer, GeneratorParameters.get_packet_length(), queue_two)
     timer.add_clock_event_listener(queue_one.queue_packet_listener)
+    timer.add_clock_event_listener(queue_two.queue_packet_listener)
 
     generator_pool = []
 
@@ -44,10 +45,14 @@ def main():
 
     timer.start_timer_event_loop()
 
+    print("queue one data:")
     print(queue_one.packets_number)
     print(queue_one.packets)
     print(queue_one.packets_passed)
-
+    print("queue two data:")
+    print(queue_two.packets_number)
+    print(queue_two.packets)
+    print(queue_two.packets_passed)
 
 if __name__ == "__main__":
     main()
