@@ -60,7 +60,6 @@ def show_average_delay_Q2(sent_packets):
     ts = []
     for packet in sent_packets:
         ts.append(packet.out_of_system_time - packet.in_second_queue_time)
-        #TODO: ^^ tu trzeba zmienić bo nie ma czasu skończenia przetwarzania w drugiej kolejce w danych pakietu
     av = sum(ts) / len(ts)
     print(f"Average delay time: {av}")
     return av
@@ -69,7 +68,6 @@ def show_average_delay_Q2(sent_packets):
 def show_average_server_load_Q2(sent_packets):
 
     av_service_time = sent_packets[0].out_of_system_time - sent_packets[0].out_of_second_queue
-    # TODO: ^^ tu trzeba zmienić bo nie ma czasu skończenia przetwarzania w drugiej kolejce w danych pakietu
     vals = []
     for i in range(len(sent_packets)-1):
         vals.append(sent_packets[i+1].in_second_queue_time - sent_packets[i].in_second_queue_time)
