@@ -1,7 +1,7 @@
 import logging as log
 
 
-class Event(object):
+class HandledEvent(object):
     def __init__(self):
         log.debug("[Event] __init__")
         self.handlers = []

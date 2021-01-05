@@ -37,7 +37,7 @@ class Queue(object):
             self._service_time_start = self._current_time
             if self._queue is not None:
                 self._current_packet.out_of_queue_time = self._service_time_start
-            #else:
+            # else:
             #    self._current_packet.out_of_second_queue_time = self._service_time_start
         elif self._current_packet and self._current_packet_remaining_time:
             self._current_packet_remaining_time -= 1
@@ -48,7 +48,9 @@ class Queue(object):
                 log.info("###Q1###")
             else:
                 self._current_packet.out_of_second_queue = self._current_time
-                self._current_packet.out_of_system_time = self._current_packet.out_of_second_queue + self._service_time
+                self._current_packet.out_of_system_time = (
+                    self._current_packet.out_of_second_queue + self._service_time
+                )
                 log.info("###Q2###")
             log.info(f"Finished handling packet: {self._current_packet}")
             if self._current_packet.is_passing:
@@ -59,5 +61,3 @@ class Queue(object):
             self._current_packet = None
         else:
             log.info("Queue is empty")
-
-        self._timer.confirm_clock()
