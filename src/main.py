@@ -41,7 +41,7 @@ def main():
                 event_queue,
                 queue_one,
                 GeneratorParameters.get_packet_length(),
-                1,
+                GeneratorParameters.get_generation_time(),
                 False,
             )
             generator_pool.append(generator)
@@ -54,7 +54,7 @@ def main():
                 event_queue,
                 queue_one,
                 GeneratorParameters.get_packet_length(),
-                1,
+                GeneratorParameters.get_generation_time(),
                 True,
             )
             generator_pool.append(generator)
@@ -65,7 +65,7 @@ def main():
             event_queue,
             queue_two,
             GeneratorParameters.get_packet_length(),
-            1,
+            GeneratorParameters.get_generation_time(),
             True,
         )
         generator_pool.append(generator)
