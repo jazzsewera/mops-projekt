@@ -1,4 +1,5 @@
 import logging as log
+import math
 
 from simulator.event_queue import Event, EventQueue
 from simulator.packet import Packet
@@ -31,7 +32,14 @@ class PacketGenerator(object):
         self._generation_time = generation_time
         self._time_counter = 0
         self._is_passing = is_passing  # flag describing whether we pass a packets to next server or drop it after leaving previous
-        self._is_state_on = True
+        self._is_state_on = False
+
+        self._switch_state(Event(
+            False,
+            0,
+            "Switch queue state (1st)",
+            self._switch_state,
+        ))
 
     def _send_packet(self, event: Event):
         packet = Packet(event.when, self._is_passing)
@@ -47,13 +55,35 @@ class PacketGenerator(object):
         self._event_queue.add_event(event)
 
     def generate_packet(self):
+        for i in range(math.floor(self._on_time / self._generation_time)):
+            event = Event(
+                False,
+                self._timer.current_time + i * self._generation_time,
+                "Start packet generation",
+                self._end_packet_generation,
+            )
+            self._event_queue.add_event(event)
+
+    def _switch_state(self, event: Event):
+        if self._is_state_on:
+            r_time = self._rand.generate_random_off_time()
+            log.debug(f"Random OFF time: {r_time}")
+        else:
+            r_time = self._rand.generate_random_on_time()
+            log.debug(f"Random ON time: {r_time}")
+            self._on_time = r_time
+            self.generate_packet()
+
+
         event = Event(
-            False,
-            self._timer.current_time,
-            "Start packet generation",
-            self._end_packet_generation,
+            True,
+            event.when + r_time,
+            "Switch queue state",
+            self._switch_state,
         )
         self._event_queue.add_event(event)
+
+        self._is_state_on = not self._is_state_on
 
         # generate next on_time and off_time
         #  self._on_time = self._rand.generate_random_on_time()

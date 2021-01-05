@@ -99,8 +99,8 @@ def main():
 
     while timer.current_time < simulation_time:
         log.debug(f"@{timer.current_time}")
-        for generator in generator_pool:
-            generator.generate_packet()
+        #for generator in generator_pool:
+        #    generator.generate_packet()
         while event_queue.handle_event():
             pass
 
