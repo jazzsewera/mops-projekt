@@ -21,6 +21,7 @@ class GeneratorParameters(object):
     _packet_length = 0
     _generation_time = 0
     _streams_number = 0
+    _dropped_streams = 0
 
     def __init__(self):
         raise RuntimeError("Call get() instead")
@@ -48,3 +49,11 @@ class GeneratorParameters(object):
     @classmethod
     def set_streams_number(cls, streams_number):
         cls._streams_number = int(streams_number)
+
+    @classmethod
+    def get_dropped_streams(cls):
+        return cls._dropped_streams
+
+    @classmethod
+    def set_dropped_streams(cls, dropped_streams):
+        cls._dropped_streams = int(dropped_streams)
