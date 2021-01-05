@@ -9,6 +9,7 @@ class Queue(object):
     def __init__(self, timer, packet_length, queue=None):
         log.debug("New queue created")
         self.packets = []
+        self.packets_passed = []
         self._timer: Timer = timer
         self._queue: Optional[Queue] = queue
         self._current_time = 0
@@ -37,9 +38,10 @@ class Queue(object):
         elif self._current_packet and not self._current_packet_remaining_time:
             self._current_packet.in_second_queue_time = self._current_time
             log.info(f"Finished handling packet: {self._current_packet}")
-            if self._queue:
                 # TODO: decide if the packet should be sent
-                self._queue.queue_packet_receiver(self._current_packet)
+            if self._current_packet.is_passing:
+                self.packets_passed.append(self._current_packet)
+            #self._queue.queue_packet_receiver(self._current_packet)
             self._current_packet = None
         else:
             log.info("Queue is empty")
