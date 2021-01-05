@@ -28,6 +28,8 @@ def main():
 
     generator_pool = []
 
+    dropped_number = GeneratorParameters.get_dropped_streams()
+
     for _ in range(GeneratorParameters.get_streams_number()):
         if GeneratorParameters.get_dropped_streams() > 0:
             generator = PacketGenerator(
@@ -42,6 +44,13 @@ def main():
             )
             timer.add_clock_event_listener(generator.generator_event_listener)
             generator_pool.append(generator)
+
+    for _ in range(dropped_number):
+        generator = PacketGenerator(
+            timer, queue_two, GeneratorParameters.get_packet_length(), 1, True
+        )
+        timer.add_clock_event_listener(generator.generator_event_listener)
+        generator_pool.append(generator)
 
     timer.start_timer_event_loop()
 
