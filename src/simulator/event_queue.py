@@ -1,13 +1,13 @@
-import logging as log
 from typing import Callable, List, Optional
 
+from logger import Logger
 from simulator.timer import Timer
 
 
 class Event(object):
     def __init__(
         self,
-        is_event_end: bool,
+        is_event_end: Optional[bool],
         when: float,
         summary: str,
         on_handle: Optional[Callable] = None,
@@ -18,33 +18,38 @@ class Event(object):
         self.on_handle = on_handle
 
     def __repr__(self):
-        return f"[Event@{self.when}] {'END' if self.is_event_end else 'START'} {self.summary}"
+        if self.is_event_end is not None:
+            event_type = "END" if self.is_event_end else "START"
+        else:
+            event_type = "SINGLE"
+        return f"[Event@{self.when:.2f}] {event_type} {self.summary}"
 
 
 class EventQueue(object):
-    def __init__(self, timer: Timer):
+    def __init__(self, simulation_time: float, timer: Timer):
+        self.log = Logger(self)
+        self._simulation_time = simulation_time
         self._timer = timer
         self.queue: List[Event] = []
 
     def add_event(self, event: Event):
-        log.debug(f"{event} | added")
+        self.log.debug(f"ADD | {event}")
         self.queue.append(event)
         self.queue.sort(key=lambda e: e.when)
 
     def handle_event(self) -> bool:
-        if self._timer.current_time > 100:
-            log.debug("Simulation time ended")
+        if self._timer.current_time > self._simulation_time:
+            self.log.debug("Simulation time ended")
             return False
         if self.queue:
             event = self.queue.pop(0)
-            log.debug(f"####### {event} #######")
-            if event.is_event_end:
-                self._timer.current_time = event.when
+            self.log.info(f"HANDLE | {event}")
+            self._timer.current_time = event.when
             if event.on_handle:
                 event.on_handle(event)
             else:
-                log.debug(f"{event} | did not have on_handle()")
+                self.log.debug(f"NOT HANDLED | {event}")
             return True
         else:
-            log.debug("Event queue empty")
+            self.log.debug("Event queue empty")
             return False

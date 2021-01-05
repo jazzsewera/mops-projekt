@@ -1,21 +1,12 @@
-import logging as log
 from typing import List
 
 from data_reader import *
+from logger import Logger
 from simulator.event_queue import EventQueue
 from simulator.packet_generator import PacketGenerator
 from simulator.queue import Queue
 from simulator.state import GeneratorParameters
 from simulator.timer import Timer
-
-try:
-    from colorlog import ColoredFormatter
-except:
-    print(
-        "Install dependencies, e.g. from requirements.txt from the repo root\n\n"
-        "$ pip3 install -r requirements.txt\n"
-    )
-    exit(2)
 
 
 def set_generator_parameters():
@@ -37,23 +28,13 @@ def set_generator_parameters():
 
 
 def main():
-    LOGFORMAT = (
-        "%(log_color)s%(levelname)-5s%(reset)s | %(log_color)s%(message)s%(reset)s"
-    )
-    LOGLEVEL = log.DEBUG
-    log.getLogger().setLevel(LOGLEVEL)
-    formatter = ColoredFormatter(LOGFORMAT)
-    stream = log.StreamHandler()
-    stream.setLevel(LOGLEVEL)
-    stream.setFormatter(formatter)
-    log.getLogger().addHandler(stream)
-    log.debug("Program started")
-
+    Logger.set_logger_params()
+    log = Logger(None)
     set_generator_parameters()
 
-    simulation_time = 50
+    simulation_time = 50.0
     timer = Timer()
-    event_queue = EventQueue(timer)
+    event_queue = EventQueue(simulation_time, timer)
     queue_two = Queue(timer, GeneratorParameters.get_packet_length())
     queue_one = Queue(timer, GeneratorParameters.get_packet_length(), queue_two)
 
@@ -97,12 +78,8 @@ def main():
         )
         generator_pool.append(generator)
 
-    while timer.current_time < simulation_time:
-        log.debug(f"@{timer.current_time}")
-        #for generator in generator_pool:
-        #    generator.generate_packet()
-        while event_queue.handle_event():
-            pass
+    while event_queue.handle_event():
+        log.debug(f"Time: @{timer.current_time}")
 
     log.debug("queue one data:")
     log.debug(queue_one.packets_number)
