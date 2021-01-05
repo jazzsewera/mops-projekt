@@ -1,8 +1,9 @@
-import logging as log
+from logger import Logger
 
 
 class Timer(object):
     def __init__(self):
+        self.log = Logger(self)
         self._current_time = 0.0
 
     @property
@@ -12,5 +13,5 @@ class Timer(object):
     @current_time.setter
     def current_time(self, new_time: float) -> None:
         if self._current_time > new_time:
-            log.warning("New time is earlier than current!")
+            self.log.warn("New time is earlier than current!")
         self._current_time = new_time
