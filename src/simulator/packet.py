@@ -4,7 +4,8 @@ class Packet:
         self.out_of_queue_time = 0
         self.in_second_queue_time = 0
         self.out_of_second_queue = 0
+        self.out_of_system_time = 0
         self.is_passing = is_passing
 
     def __repr__(self):
-        return f"{self.in_queue_time} {self.out_of_queue_time} {self.in_second_queue_time} {self.out_of_second_queue} is_passing={self.is_passing}"
+        return f"{self.in_queue_time} {self.out_of_queue_time} {self.in_second_queue_time} {self.out_of_second_queue} {self.out_of_system_time} is_passing={self.is_passing}"
