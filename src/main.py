@@ -70,6 +70,8 @@ def main():
     print(queue_two.packets_passed)
     show_queue_length_average(queue_two.packets_number)
     show_average_queue_waiting_time_Q2(queue_two.packets_passed)
+    show_average_delay_Q2(queue_two.packets_passed)
+    show_average_server_load_Q2(queue_two.packets_passed)
 
 if __name__ == "__main__":
     main()

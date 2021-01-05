@@ -48,6 +48,7 @@ class Queue(object):
                 log.info("###Q1###")
             else:
                 self._current_packet.out_of_second_queue = self._current_time
+                self._current_packet.out_of_system_time = self._current_packet.out_of_second_queue + self._service_time
                 log.info("###Q2###")
             log.info(f"Finished handling packet: {self._current_packet}")
             if self._current_packet.is_passing:
@@ -55,7 +56,6 @@ class Queue(object):
                 if self._queue is not None:
                     self._queue.queue_packet_receiver(self._current_packet)
                     log.info("Sending packet to next queue")
-            #self._queue.queue_packet_receiver(self._current_packet)
             self._current_packet = None
         else:
             log.info("Queue is empty")
