@@ -21,7 +21,7 @@ class Queue(object):
         self._current_packet_remaining_time = 0
 
     def queue_packet_receiver(self, packet: Packet):
-        if self._queue is None:
+        if self._queue is None and packet.out_of_queue_time == 0:
             packet.in_second_queue_time = packet.in_queue_time
             packet.in_queue_time = 0
         self.packets.append(packet)
