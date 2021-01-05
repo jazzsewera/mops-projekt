@@ -4,6 +4,7 @@ from simulator.packet_generator import PacketGenerator
 from simulator.queue import Queue
 from simulator.state import GeneratorParameters
 from simulator.timer import Timer
+from data_reader import *
 
 
 def set_generator_parameters():
@@ -58,10 +59,17 @@ def main():
     print(queue_one.packets_number)
     print(queue_one.packets)
     print(queue_one.packets_passed)
+    show_queue_length_average(queue_one.packets_number)
+    show_average_queue_waiting_time_Q1(queue_one.packets_passed)
+    show_average_delay_Q1(queue_one.packets_passed)
+    show_average_server_load_Q1(queue_one.packets_passed)
+
     print("queue two data:")
     print(queue_two.packets_number)
     print(queue_two.packets)
     print(queue_two.packets_passed)
+    show_queue_length_average(queue_two.packets_number)
+    show_average_queue_waiting_time_Q2(queue_two.packets_passed)
 
 if __name__ == "__main__":
     main()
