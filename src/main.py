@@ -8,24 +8,51 @@ from simulator.queue import Queue
 from simulator.state import GeneratorParameters
 from simulator.timer import Timer
 
+try:
+    from colorlog import ColoredFormatter
+except:
+    print(
+        "Install dependencies, e.g. from requirements.txt from the repo root\n\n"
+        "$ pip3 install -r requirements.txt\n"
+    )
+    exit(2)
+
 
 def set_generator_parameters():
     GeneratorParameters.set_packet_length(input("Enter packet length: "))
     GeneratorParameters.set_generation_time(input("Enter generation time: "))
     GeneratorParameters.set_streams_number(input("Enter a number of streams: "))
     GeneratorParameters.set_dropped_streams(
-        input("Enter number of streams dropped after leaving first queue:")
-    )  # TODO assertion that dropped streams < all streams
+        input("Enter number of streams dropped after leaving first queue: ")
+    )
+    if (
+        GeneratorParameters.get_streams_number()
+        <= GeneratorParameters.get_dropped_streams()
+    ):
+        log.error(
+            "The number of dropped streams has to be lower than "
+            "the number of streams going into the first queue"
+        )
+        exit(1)
 
 
 def main():
-    log.getLogger().setLevel(log.DEBUG)
+    LOGFORMAT = (
+        "%(log_color)s%(levelname)-5s%(reset)s | %(log_color)s%(message)s%(reset)s"
+    )
+    LOGLEVEL = log.DEBUG
+    log.getLogger().setLevel(LOGLEVEL)
+    formatter = ColoredFormatter(LOGFORMAT)
+    stream = log.StreamHandler()
+    stream.setLevel(LOGLEVEL)
+    stream.setFormatter(formatter)
+    log.getLogger().addHandler(stream)
     log.debug("Program started")
 
     set_generator_parameters()
 
     simulation_time = 50
-    timer = Timer(simulation_time)
+    timer = Timer()
     event_queue = EventQueue(timer)
     queue_two = Queue(timer, GeneratorParameters.get_packet_length())
     queue_one = Queue(timer, GeneratorParameters.get_packet_length(), queue_two)
@@ -70,11 +97,12 @@ def main():
         )
         generator_pool.append(generator)
 
-    for generator in generator_pool:
-        generator.generate_packet()
-
-    while event_queue.handle_event():
-        pass
+    while timer.current_time < simulation_time:
+        log.debug(f"@{timer.current_time}")
+        for generator in generator_pool:
+            generator.generate_packet()
+        while event_queue.handle_event():
+            pass
 
     log.debug("queue one data:")
     log.debug(queue_one.packets_number)
