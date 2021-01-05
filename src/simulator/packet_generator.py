@@ -7,7 +7,7 @@ from simulator.timer import Timer
 
 
 class PacketGenerator(object):
-    def __init__(self, timer, queue, packet_length, generation_time):
+    def __init__(self, timer, queue, packet_length, generation_time, is_passing):
         log.debug("New packet stream created")
         self._current_time = 0
         self._on_time_start = 0
@@ -21,13 +21,13 @@ class PacketGenerator(object):
         self._packet_length = packet_length
         self._generation_time = generation_time
         self._time_counter = 0
+        self._is_passing = is_passing  # flag describing whether we pass a packets to next server or drop it after leaving previous
         self._is_state_on = True
-        self._is_passing = True  # flag describing whether we pass a packet to next server or drop it after leaving previous
 
     def generator_event_listener(self, current_time):
         self._current_time = current_time
         if self._current_time < self._on_time_start + self._on_time:
-            packet = Packet(self._current_time + self._generation_time)
+            packet = Packet(self._current_time + self._generation_time, self._is_passing)
             log.debug(f"Sending packet: {packet} from generator")
             self._queue.queue_packet_receiver(packet)
             self._timer.confirm_clock()

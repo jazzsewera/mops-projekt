@@ -10,6 +10,7 @@ def set_generator_parameters():
     GeneratorParameters.set_packet_length(input("Enter packet length: "))
     GeneratorParameters.set_generation_time(input("Enter generation time: "))
     GeneratorParameters.set_streams_number(input("Enter a number of streams: "))
+    GeneratorParameters.set_dropped_streams(input("Enter number of streams dropped after leaving first queue:")) # TODO assertion that dropped streams < all streams
 
 
 def main():
@@ -26,11 +27,19 @@ def main():
     generator_pool = []
 
     for _ in range(GeneratorParameters.get_streams_number()):
-        generator = PacketGenerator(
-            timer, queue_one, GeneratorParameters.get_packet_length(), 1
-        )
-        timer.add_clock_event_listener(generator.generator_event_listener)
-        generator_pool.append(generator)
+        if GeneratorParameters.get_dropped_streams() > 0:
+            generator = PacketGenerator(
+                timer, queue_one, GeneratorParameters.get_packet_length(), 1, False
+            )
+            timer.add_clock_event_listener(generator.generator_event_listener)
+            generator_pool.append(generator)
+            GeneratorParameters.set_dropped_streams(GeneratorParameters.get_dropped_streams() - 1)
+        else:
+            generator = PacketGenerator(
+                timer, queue_one, GeneratorParameters.get_packet_length(), 1, True
+            )
+            timer.add_clock_event_listener(generator.generator_event_listener)
+            generator_pool.append(generator)
 
     timer.start_timer_event_loop()
 
