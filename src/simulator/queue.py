@@ -8,7 +8,12 @@ from simulator.timer import Timer
 
 class Queue(object):
     def __init__(
-        self, timer: Timer, event_queue: EventQueue, packet_length: int, queue=None
+        self,
+        timer: Timer,
+        event_queue: EventQueue,
+        packet_length: int,
+        queue_constant: float,
+        queue=None,
     ):
         self.log = Logger(self)
         self.log.debug("New queue created")
@@ -18,7 +23,7 @@ class Queue(object):
         self._event_queue = event_queue
         self._queue: Optional[Queue] = queue
         self._current_time = 0.0
-        self._service_time = 2.0 * packet_length
+        self._service_time = queue_constant * packet_length
         self._service_time_start = 0.0
         self._last_packets_number = 0
         self._metrics_delta = 1.0
@@ -26,7 +31,7 @@ class Queue(object):
         self._current_packet: Optional[Packet] = None
         self._current_packet_remaining_time = 0.0
 
-        #self._get_metrics(Event(None, 0.0, "Get queue metrics", self._get_metrics))
+        # self._get_metrics(Event(None, 0.0, "Get queue metrics", self._get_metrics))
 
     def _end_packet_handling(self, event: Event):
         event = Event(
@@ -37,7 +42,9 @@ class Queue(object):
     def _send_packet(self, event: Event):
         if self._current_packet is not None:
             if self._queue is None:
-                self._current_packet.out_of_second_queue = event.when - self._service_time
+                self._current_packet.out_of_second_queue = (
+                    event.when - self._service_time
+                )
                 self._current_packet.out_of_system_time = event.when
                 self.packets_passed.append(self._current_packet)
             else:
@@ -46,7 +53,7 @@ class Queue(object):
 
                 if self._current_packet.is_passing:
                     self._queue.queue_packet_receiver(self._current_packet)
-                
+
                 self.packets_passed.append(self._current_packet)
         else:
             self.log.error(
@@ -64,10 +71,9 @@ class Queue(object):
 
         self._current_packet = self.packets.pop(0)
         self.packets_number[self._timer.current_time] = len(self.packets)
-        event = Event(False,
-                      start_time + self._service_time,
-                      "Packet handling",
-                      self._send_packet)
+        event = Event(
+            False, start_time + self._service_time, "Packet handling", self._send_packet
+        )
         self._event_queue.add_event(event)
 
     def queue_packet_receiver(self, packet: Packet):
@@ -77,8 +83,8 @@ class Queue(object):
 
         self.packets.append(packet)
         self.packets_number[self._timer.current_time] = len(self.packets)
-        #self.log.info(f"RECEIVE | {packet}")
-        #self.log.debug(f"Number of packets: {len(self.packets)}")
+        # self.log.info(f"RECEIVE | {packet}")
+        # self.log.debug(f"Number of packets: {len(self.packets)}")
 
         if self._current_packet is None:
             if self._queue is not None:

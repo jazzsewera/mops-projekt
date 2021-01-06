@@ -1,71 +1,105 @@
+import argparse
 from typing import List
 
-from data_reader import *
+import data_reader
 from logger import Logger
 from simulator.event_queue import EventQueue
 from simulator.packet_generator import PacketGenerator
 from simulator.queue import Queue
-from simulator.state import GeneratorParameters
+from simulator.state import SimulationParameters
 from simulator.timer import Timer
 
 
-def set_generator_parameters():
-    GeneratorParameters.set_packet_length(input("Enter packet length: "))
-    GeneratorParameters.set_generation_time(input("Enter generation time: "))
-    GeneratorParameters.set_streams_number(input("Enter a number of streams: "))
-    GeneratorParameters.set_dropped_streams(
-        input("Enter number of streams dropped after leaving first queue: ")
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-l", "--length", help="Packet length", type=int, required=True)
+    parser.add_argument(
+        "-t", "--simulationtime", help="Simulation time", type=float, required=True
     )
-    if (
-        GeneratorParameters.get_streams_number()
-        <= GeneratorParameters.get_dropped_streams()
-    ):
-        log = Logger(None)
+    parser.add_argument(
+        "-g",
+        "--generationconstant",
+        help="Generation time = Packet length * Generation constant",
+        type=float,
+        required=True,
+    )
+    parser.add_argument(
+        "-q",
+        "--queueconstant",
+        help="Handling time = Packet length * Queue constant",
+        type=float,
+        required=True,
+    )
+    parser.add_argument(
+        "-n", "--streams", help="Number of streams", type=int, required=True
+    )
+    parser.add_argument(
+        "-d",
+        "--dropped",
+        help="Number of dropped streams after the first queue",
+        type=int,
+        required=True,
+    )
+    args = parser.parse_args()
+
+    simulation_params = SimulationParameters(
+        args.simulationtime,
+        args.length,
+        args.generationconstant,
+        args.queueconstant,
+        args.streams,
+        args.dropped,
+    )
+    Logger.set_logger_params()
+    log = Logger(None)
+
+    if simulation_params.streams_number <= simulation_params.dropped_streams:
         log.error(
             "The number of dropped streams has to be lower than "
             "the number of streams going into the first queue"
         )
         exit(1)
 
-
-def main():
-    Logger.set_logger_params()
-    log = Logger(None)
-    set_generator_parameters()
-
-    simulation_time = 50.0
+    simulation_time = simulation_params.simulation_time
     timer = Timer()
     event_queue = EventQueue(simulation_time, timer)
-    queue_two = Queue(timer, event_queue, GeneratorParameters.get_packet_length())
+    queue_two = Queue(
+        timer,
+        event_queue,
+        simulation_params.packet_length,
+        simulation_params.queue_constant,
+    )
     queue_one = Queue(
-        timer, event_queue, GeneratorParameters.get_packet_length(), queue_two
+        timer,
+        event_queue,
+        simulation_params.packet_length,
+        simulation_params.queue_constant,
+        queue_two,
     )
 
     generator_pool: List[PacketGenerator] = []
 
-    dropped_number = GeneratorParameters.get_dropped_streams()
+    dropped_number = simulation_params.dropped_streams
 
-    for _ in range(GeneratorParameters.get_streams_number()):
-        if GeneratorParameters.get_dropped_streams() > 0:
+    for _ in range(simulation_params.streams_number):
+        if dropped_number > 0:
             generator = PacketGenerator(
                 timer,
                 event_queue,
                 queue_one,
-                GeneratorParameters.get_packet_length(),
-                GeneratorParameters.get_generation_time(),
+                simulation_params.packet_length,
+                simulation_params.generation_constant,
                 False,
             )
             generator_pool.append(generator)
-            GeneratorParameters.set_dropped_streams(
-                GeneratorParameters.get_dropped_streams() - 1
-            )
+            dropped_number -= 1
         else:
             generator = PacketGenerator(
                 timer,
                 event_queue,
                 queue_one,
-                GeneratorParameters.get_packet_length(),
-                GeneratorParameters.get_generation_time(),
+                simulation_params.packet_length,
+                simulation_params.generation_constant,
                 True,
             )
             generator_pool.append(generator)
@@ -75,8 +109,8 @@ def main():
             timer,
             event_queue,
             queue_two,
-            GeneratorParameters.get_packet_length(),
-            GeneratorParameters.get_generation_time(),
+            simulation_params.packet_length,
+            simulation_params.generation_constant,
             True,
         )
         generator_pool.append(generator)
@@ -88,19 +122,19 @@ def main():
     log.info(queue_one.packets_number)
     log.debug(queue_one.packets)
     log.debug(queue_one.packets_passed)
-    show_queue_length_average(queue_one.packets_number)
-    show_average_queue_waiting_time_Q1(queue_one.packets_passed)
-    show_average_delay_Q1(queue_one.packets_passed)
-    show_average_server_load_Q1(queue_one.packets_passed)
+    data_reader.show_queue_length_average(queue_one.packets_number)
+    data_reader.show_average_queue_waiting_time_Q1(queue_one.packets_passed)
+    data_reader.show_average_delay_Q1(queue_one.packets_passed)
+    data_reader.show_average_server_load_Q1(queue_one.packets_passed)
 
     log.debug("queue two data:")
     log.info(queue_two.packets_number)
     log.debug(queue_two.packets)
     log.debug(queue_two.packets_passed)
-    show_queue_length_average(queue_two.packets_number)
-    show_average_queue_waiting_time_Q2(queue_two.packets_passed)
-    show_average_delay_Q2(queue_two.packets_passed)
-    show_average_server_load_Q2(queue_two.packets_passed)
+    data_reader.show_queue_length_average(queue_two.packets_number)
+    data_reader.show_average_queue_waiting_time_Q2(queue_two.packets_passed)
+    data_reader.show_average_delay_Q2(queue_two.packets_passed)
+    data_reader.show_average_server_load_Q2(queue_two.packets_passed)
 
 
 if __name__ == "__main__":
