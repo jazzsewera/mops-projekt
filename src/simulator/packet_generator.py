@@ -15,7 +15,7 @@ class PacketGenerator(object):
         event_queue: EventQueue,
         queue: Queue,
         packet_length: int,
-        generation_time: float,
+        generation_constant: float,
         is_passing: bool,
     ):
         self.log = Logger(self)
@@ -30,7 +30,7 @@ class PacketGenerator(object):
         self._queue = queue
         self._rand = Rand(0.2, 0.2)  # set lambda1 and lambda2 on start
         self._packet_length = packet_length
-        self._generation_time = generation_time
+        self._generation_time = packet_length * generation_constant
         self._time_counter = 0
         self._is_passing = is_passing  # flag describing whether we pass a packets to next server or drop it after leaving previous
         self._is_state_on = False
@@ -88,10 +88,6 @@ class PacketGenerator(object):
         if self._is_state_on:
             r_time = self._rand.generate_random_off_time()
             event_summary = f"Switch generator state to ON after {r_time:.2f}"
-            #gen_packet_event = Event(
-            #    None, event.when, "Execute packet generator", self.generate_packet
-            #)
-            #self._event_queue.add_event(gen_packet_event)
         else:
             r_time = self._rand.generate_random_on_time()
             event_summary = f"Switch generator state to OFF after {r_time:.2f}"
@@ -107,9 +103,3 @@ class PacketGenerator(object):
         self._event_queue.add_event(event)
 
         self._is_state_on = not self._is_state_on
-
-        # generate next on_time and off_time
-        #  self._on_time = self._rand.generate_random_on_time()
-        #  self._off_time = self._rand.generate_random_off_time()
-        #  self._on_time_start = self._timer.current_time
-        #  self._off_time_start = self._timer.current_time + self._on_time
