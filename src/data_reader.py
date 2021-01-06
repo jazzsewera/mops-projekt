@@ -1,10 +1,14 @@
+from logger import Logger
+
+log = Logger(None)
+
 def show_queue_length_average(number_of_packets):
     vals = []
     for k,v in number_of_packets.items():
         vals.append(v)
 
     av = sum(vals)/len(vals)
-    print(f"Average number of packets: {av}")
+    log.info(f"Average number of packets: {av}")
     return av
 
 
@@ -14,7 +18,7 @@ def show_average_queue_waiting_time_Q1(sent_packets):
         ts.append(packet.out_of_queue_time - packet.in_queue_time)
 
     av = sum(ts) / len(ts)
-    print(f"Average waiting time: {av}")
+    log.info(f"Average waiting time: {av}")
     return av
 
 
@@ -24,7 +28,7 @@ def show_average_delay_Q1(sent_packets):
         ts.append(packet.in_second_queue_time - packet.in_queue_time)
 
     av = sum(ts) / len(ts)
-    print(f"Average delay time: {av}")
+    log.info(f"Average delay time: {av}")
     return av
 
 
@@ -42,7 +46,7 @@ def show_average_server_load_Q1(sent_packets):
     outflow = 1/av_service_time
 
     av = influx/outflow
-    print(f"Average server load: {av}")
+    log.info(f"Average server load: {av}")
     return av
 
 
@@ -52,7 +56,7 @@ def show_average_queue_waiting_time_Q2(sent_packets):
         ts.append(packet.out_of_second_queue - packet.in_second_queue_time)
 
     av = sum(ts) / len(ts)
-    print(f"Average waiting time: {av}")
+    log.info(f"Average waiting time: {av}")
     return av
 
 
@@ -61,7 +65,7 @@ def show_average_delay_Q2(sent_packets):
     for packet in sent_packets:
         ts.append(packet.out_of_system_time - packet.in_second_queue_time)
     av = sum(ts) / len(ts)
-    print(f"Average delay time: {av}")
+    log.info(f"Average delay time: {av}")
     return av
 
 
@@ -78,5 +82,5 @@ def show_average_server_load_Q2(sent_packets):
     outflow = 1/av_service_time
 
     av = influx/outflow
-    print(f"Average server load: {av}")
+    log.info(f"Average server load: {av}")
     return av

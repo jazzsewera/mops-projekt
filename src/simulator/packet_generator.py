@@ -1,5 +1,7 @@
-import logging as log
+import math
 
+from logger import Logger
+from simulator.event_queue import Event, EventQueue
 from simulator.packet import Packet
 from simulator.queue import Queue
 from simulator.rand import Rand
@@ -7,37 +9,107 @@ from simulator.timer import Timer
 
 
 class PacketGenerator(object):
-    def __init__(self, timer, queue, packet_length, generation_time, is_passing):
-        log.debug("New packet stream created")
-        self._current_time = 0
+    def __init__(
+        self,
+        timer: Timer,
+        event_queue: EventQueue,
+        queue: Queue,
+        packet_length: int,
+        generation_time: float,
+        is_passing: bool,
+    ):
+        self.log = Logger(self)
+        self.log.debug("New packet stream created")
         self._on_time_start = 0
         self._on_time = 0
         self._off_time_start = 0
         self._off_time = 0
 
-        self._timer: Timer = timer
-        self._queue: Queue = queue
-        self._rand = Rand(0.5, 0.3)  # set lambda1 and lambda2 on start
+        self._timer = timer
+        self._event_queue = event_queue
+        self._queue = queue
+        self._rand = Rand(0.2, 0.2)  # set lambda1 and lambda2 on start
         self._packet_length = packet_length
         self._generation_time = generation_time
         self._time_counter = 0
         self._is_passing = is_passing  # flag describing whether we pass a packets to next server or drop it after leaving previous
-        self._is_state_on = True
+        self._is_state_on = False
 
-    def generator_event_listener(self, current_time):
-        self._current_time = current_time
-        if self._current_time < self._on_time_start + self._on_time:
-            packet = Packet(self._current_time + self._generation_time, self._is_passing)
-            log.debug(f"Sending packet: {packet} from generator")
-            self._queue.queue_packet_receiver(packet)
-            self._timer.confirm_clock()
-        # jeszcze jeden if if self current time == self.ontimestart + iterator (leci od zera) i zwieksza sie o 1 co wysłany pakiet * generation time
-        elif self._current_time < self._off_time_start + self._off_time:
-            self._timer.confirm_clock()
+        self._switch_state(
+            Event(
+                None,
+                0,
+                "Switch queue state (1st)",
+                self._switch_state,
+            )
+        )
+
+    def _send_packet(self, event: Event):
+        packet = Packet(event.when, self._is_passing)
+        self._queue.queue_packet_receiver(packet)
+
+    def _end_packet_generation(self, event: Event):
+        event = Event(
+            True,
+            event.when + self._generation_time,
+            event.summary,
+            self._send_packet,
+        )
+        self.log.warn("Sending packet to queue from generator")
+        self._event_queue.add_event(event)
+
+    def generate_packets(self, time):
+        for i in range(math.floor(self._on_time / self._generation_time)):
+            self.log.debug(
+                f"Adding packet generation for {time + i * self._generation_time}"
+            )
+            self.log.debug(
+                f"event.when={time}, i={i}, self._generation_time={self._generation_time}"
+            )
+            _event = Event(
+                False,
+                time + i * self._generation_time,
+                "Packet generation",
+                self._end_packet_generation,
+            )
+            self._event_queue.add_event(_event)
+
+    def generate_packets_events(self, time):
+        for i in range(math.floor(self._on_time / self._generation_time)):
+            _event = Event(
+                False,
+                time + i * self._generation_time,
+                "Packet generation",
+                self._end_packet_generation,
+            )
+            self._event_queue.add_event(_event)
+
+    def _switch_state(self, event: Event):
+        if self._is_state_on:
+            r_time = self._rand.generate_random_off_time()
+            event_summary = f"Switch generator state to ON after {r_time:.2f}"
+            #gen_packet_event = Event(
+            #    None, event.when, "Execute packet generator", self.generate_packet
+            #)
+            #self._event_queue.add_event(gen_packet_event)
         else:
-            # generate next on_time and off_time
-            self._on_time = self._rand.generate_random_on_time()
-            self._off_time = self._rand.generate_random_off_time()
-            self._on_time_start = self._current_time
-            self._off_time_start = self._current_time + self._on_time
-            self.generator_event_listener(self._current_time)
+            r_time = self._rand.generate_random_on_time()
+            event_summary = f"Switch generator state to OFF after {r_time:.2f}"
+            self._on_time = r_time
+            self.generate_packets(event.when)
+
+        event = Event(
+            None,
+            event.when + r_time,
+            event_summary,
+            self._switch_state,
+        )
+        self._event_queue.add_event(event)
+
+        self._is_state_on = not self._is_state_on
+
+        # generate next on_time and off_time
+        #  self._on_time = self._rand.generate_random_on_time()
+        #  self._off_time = self._rand.generate_random_off_time()
+        #  self._on_time_start = self._timer.current_time
+        #  self._off_time_start = self._timer.current_time + self._on_time

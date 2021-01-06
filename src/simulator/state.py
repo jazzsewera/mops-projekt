@@ -19,7 +19,7 @@ class SimulationTime(object):
 
 class GeneratorParameters(object):
     _packet_length = 0
-    _generation_time = 0
+    _generation_time = 0.0
     _streams_number = 0
     _dropped_streams = 0
 
@@ -40,7 +40,7 @@ class GeneratorParameters(object):
 
     @classmethod
     def set_generation_time(cls, generation_time):
-        cls._generation_time = int(generation_time)
+        cls._generation_time = float(generation_time)
 
     @classmethod
     def get_streams_number(cls):
