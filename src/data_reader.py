@@ -2,12 +2,13 @@ from logger import Logger
 
 log = Logger(None)
 
+
 def show_queue_length_average(number_of_packets):
     vals = []
-    for k,v in number_of_packets.items():
+    for _, v in number_of_packets.items():
         vals.append(v)
 
-    av = sum(vals)/len(vals)
+    av = sum(vals) / len(vals)
     log.info(f"Average number of packets: {av}")
     return av
 
@@ -34,18 +35,20 @@ def show_average_delay_Q1(sent_packets):
 
 def show_average_server_load_Q1(sent_packets):
 
-    av_service_time = sent_packets[0].in_second_queue_time - sent_packets[0].out_of_queue_time
+    av_service_time = (
+        sent_packets[0].in_second_queue_time - sent_packets[0].out_of_queue_time
+    )
 
     vals = []
-    for i in range(len(sent_packets)-1):
-        vals.append(sent_packets[i+1].in_queue_time - sent_packets[i].in_queue_time)
+    for i in range(len(sent_packets) - 1):
+        vals.append(sent_packets[i + 1].in_queue_time - sent_packets[i].in_queue_time)
 
     av_time_between_in_queue = sum(vals) / len(vals)
 
-    influx = 1/av_time_between_in_queue
-    outflow = 1/av_service_time
+    influx = 1 / av_time_between_in_queue
+    outflow = 1 / av_service_time
 
-    av = influx/outflow
+    av = influx / outflow
     log.info(f"Average server load: {av}")
     return av
 
@@ -71,16 +74,21 @@ def show_average_delay_Q2(sent_packets):
 
 def show_average_server_load_Q2(sent_packets):
 
-    av_service_time = sent_packets[0].out_of_system_time - sent_packets[0].out_of_second_queue
+    av_service_time = (
+        sent_packets[0].out_of_system_time - sent_packets[0].out_of_second_queue
+    )
     vals = []
-    for i in range(len(sent_packets)-1):
-        vals.append(sent_packets[i+1].in_second_queue_time - sent_packets[i].in_second_queue_time)
+    for i in range(len(sent_packets) - 1):
+        vals.append(
+            sent_packets[i + 1].in_second_queue_time
+            - sent_packets[i].in_second_queue_time
+        )
 
     av_time_between_in_queue = sum(vals) / len(vals)
 
-    influx = 1/av_time_between_in_queue
-    outflow = 1/av_service_time
+    influx = 1 / av_time_between_in_queue
+    outflow = 1 / av_service_time
 
-    av = influx/outflow
+    av = influx / outflow
     log.info(f"Average server load: {av}")
     return av
