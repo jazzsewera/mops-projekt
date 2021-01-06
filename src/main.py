@@ -33,7 +33,7 @@ def main():
     log = Logger(None)
     set_generator_parameters()
 
-    simulation_time = 10.0
+    simulation_time = 50.0
     timer = Timer()
     event_queue = EventQueue(simulation_time, timer)
     queue_two = Queue(timer, event_queue, GeneratorParameters.get_packet_length())
