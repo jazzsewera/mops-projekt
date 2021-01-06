@@ -85,7 +85,7 @@ def main():
         log.debug(f"Time: @{timer.current_time:.2f}")
 
     log.debug("queue one data:")
-    log.debug(queue_one.packets_number)
+    log.info(queue_one.packets_number)
     log.debug(queue_one.packets)
     log.debug(queue_one.packets_passed)
     show_queue_length_average(queue_one.packets_number)
@@ -94,7 +94,7 @@ def main():
     show_average_server_load_Q1(queue_one.packets_passed)
 
     log.debug("queue two data:")
-    log.debug(queue_two.packets_number)
+    log.info(queue_two.packets_number)
     log.debug(queue_two.packets)
     log.debug(queue_two.packets_passed)
     show_queue_length_average(queue_two.packets_number)
