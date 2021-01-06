@@ -43,11 +43,11 @@ class Queue(object):
             else:
                 self._current_packet.out_of_queue_time = event.when - self._service_time
                 self._current_packet.in_second_queue_time = event.when
-                self._queue.queue_packet_receiver(self._current_packet)
 
                 if self._current_packet.is_passing:
                     self._queue.queue_packet_receiver(self._current_packet)
-                    self.packets_passed.append(self._current_packet)
+                
+                self.packets_passed.append(self._current_packet)
         else:
             self.log.error(
                 "self._current_packet is None "
