@@ -1,4 +1,5 @@
 import argparse
+import json
 from typing import List
 
 import data_reader
@@ -119,22 +120,41 @@ def main():
         log.debug(f"Time: @{timer.current_time:.2f}")
 
     log.debug("queue one data:")
-    log.info(queue_one.packets_number)
+    log.debug(queue_one.packets_number)
     log.debug(queue_one.packets)
     log.debug(queue_one.packets_passed)
-    data_reader.show_queue_length_average(queue_one.packets_number)
-    data_reader.show_average_queue_waiting_time_Q1(queue_one.packets_passed)
-    data_reader.show_average_delay_Q1(queue_one.packets_passed)
-    data_reader.show_average_server_load_Q1(queue_one.packets_passed)
+
+    results = {}
+    results["avg_queue_length_Q1"] = data_reader.show_queue_length_average(
+        queue_one.packets_number
+    )
+    results[
+        "avg_queue_waiting_time_Q1"
+    ] = data_reader.show_average_queue_waiting_time_Q1(queue_one.packets_passed)
+    results["avg_delay_Q1"] = data_reader.show_average_delay_Q1(
+        queue_one.packets_passed
+    )
+    results["avg_load_Q1"] = data_reader.show_average_server_load_Q1(
+        queue_one.packets_passed
+    )
 
     log.debug("queue two data:")
-    log.info(queue_two.packets_number)
+    log.debug(queue_two.packets_number)
     log.debug(queue_two.packets)
     log.debug(queue_two.packets_passed)
-    data_reader.show_queue_length_average(queue_two.packets_number)
-    data_reader.show_average_queue_waiting_time_Q2(queue_two.packets_passed)
-    data_reader.show_average_delay_Q2(queue_two.packets_passed)
-    data_reader.show_average_server_load_Q2(queue_two.packets_passed)
+    results["avg_queue_length_Q2"] = data_reader.show_queue_length_average(
+        queue_two.packets_number
+    )
+    results[
+        "avg_queue_waiting_time_Q2"
+    ] = data_reader.show_average_queue_waiting_time_Q2(queue_two.packets_passed)
+    results["avg_delay_Q2"] = data_reader.show_average_delay_Q2(
+        queue_two.packets_passed
+    )
+    results["avg_load_Q2"] = data_reader.show_average_server_load_Q2(
+        queue_two.packets_passed
+    )
+    print(json.dumps(results))
 
 
 if __name__ == "__main__":
