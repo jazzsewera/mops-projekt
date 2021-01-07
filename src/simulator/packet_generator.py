@@ -14,6 +14,7 @@ class PacketGenerator(object):
         timer: Timer,
         event_queue: EventQueue,
         queue: Queue,
+        rand: Rand,
         packet_length: int,
         generation_constant: float,
         is_passing: bool,
@@ -28,7 +29,7 @@ class PacketGenerator(object):
         self._timer = timer
         self._event_queue = event_queue
         self._queue = queue
-        self._rand = Rand(0.2, 0.2)  # set lambda1 and lambda2 on start
+        self._rand = rand
         self._packet_length = packet_length
         self._generation_time = packet_length * generation_constant
         self._time_counter = 0
