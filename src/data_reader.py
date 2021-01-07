@@ -95,7 +95,7 @@ def show_average_delay_Q2(sent_packets):
     ts = []
 
     if len(sent_packets) == 0:
-        (f"Average delay time: NO DATA")
+        log.info(f"Average delay time: NO DATA")
         return 0
 
     for packet in sent_packets:
