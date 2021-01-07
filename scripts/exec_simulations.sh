@@ -16,15 +16,26 @@ gen_const=8e-5
 queue_const=1.56e-5
 lambda_on=5
 lambda_off=5
-streams=6
-dropped=2
+# streams=6
+# dropped=2
 
-python3 ${simulator} \
-  -l ${length} \
-  -t ${simulation_time} \
-  -g ${gen_const} \
-  -q ${queue_const} \
-  -o ${lambda_on} \
-  -f ${lambda_off} \
-  -n ${streams} \
-  -d ${dropped} >> ${outfile}
+streams_arr={1..10}
+dropped_arr={0..9}
+
+for streams in {1..10}; do
+  for dropped in {0..9}; do
+    if [[ ${streams} -le ${dropped} ]]; then
+      echo "streams <= dropped"
+    else
+      python3 ${simulator} \
+        -l ${length} \
+        -t ${simulation_time} \
+        -g ${gen_const} \
+        -q ${queue_const} \
+        -o ${lambda_on} \
+        -f ${lambda_off} \
+        -n ${streams} \
+        -d ${dropped} >> ${outfile}
+    fi
+  done
+done
