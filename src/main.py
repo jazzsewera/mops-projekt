@@ -152,6 +152,14 @@ def main():
     results["avg_load_Q2"] = data_reader.show_average_server_load_Q2(
         queue_two.packets_passed
     )
+    results["simulation_params"] = {
+        "simulation_time": simulation_params.simulation_time,
+        "packet_length": simulation_params.packet_length,
+        "generation_constant": simulation_params.generation_constant,
+        "queue_constant": simulation_params.queue_constant,
+        "streams_number": simulation_params.streams_number,
+        "dropped_streams": simulation_params.dropped_streams,
+    }
     print(json.dumps(results))
 
 
