@@ -80,32 +80,30 @@ def main():
 
     generator_pool: List[PacketGenerator] = []
 
-    dropped_number = simulation_params.dropped_streams
+    for _ in range(
+        simulation_params.streams_number - simulation_params.dropped_streams
+    ):
+        generator = PacketGenerator(
+            timer,
+            event_queue,
+            queue_one,
+            simulation_params.packet_length,
+            simulation_params.generation_constant,
+            True,
+        )
+        generator_pool.append(generator)
 
-    for _ in range(simulation_params.streams_number):
-        if dropped_number > 0:
-            generator = PacketGenerator(
-                timer,
-                event_queue,
-                queue_one,
-                simulation_params.packet_length,
-                simulation_params.generation_constant,
-                False,
-            )
-            generator_pool.append(generator)
-            dropped_number -= 1
-        else:
-            generator = PacketGenerator(
-                timer,
-                event_queue,
-                queue_one,
-                simulation_params.packet_length,
-                simulation_params.generation_constant,
-                True,
-            )
-            generator_pool.append(generator)
+    for _ in range(simulation_params.dropped_streams):
+        generator = PacketGenerator(
+            timer,
+            event_queue,
+            queue_one,
+            simulation_params.packet_length,
+            simulation_params.generation_constant,
+            False,
+        )
+        generator_pool.append(generator)
 
-    for _ in range(dropped_number):
         generator = PacketGenerator(
             timer,
             event_queue,
