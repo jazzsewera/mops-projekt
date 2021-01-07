@@ -1,5 +1,6 @@
 import argparse
 import json
+from simulator.rand import Rand
 from typing import List
 
 import data_reader
@@ -32,6 +33,20 @@ def main():
         required=True,
     )
     parser.add_argument(
+        "-o",
+        "--lambdaon",
+        help="Lambda parameter for ON state",
+        type=float,
+        required=True,
+    )
+    parser.add_argument(
+        "-f",
+        "--lambdaoff",
+        help="Lambda parameter for OFF state",
+        type=float,
+        required=True,
+    )
+    parser.add_argument(
         "-n", "--streams", help="Number of streams", type=int, required=True
     )
     parser.add_argument(
@@ -48,6 +63,8 @@ def main():
         args.length,
         args.generationconstant,
         args.queueconstant,
+        args.lambdaon,
+        args.lambdaoff,
         args.streams,
         args.dropped,
     )
@@ -78,6 +95,8 @@ def main():
         queue_two,
     )
 
+    rand = Rand(simulation_params.lambda_on, simulation_params.lambda_off)
+
     generator_pool: List[PacketGenerator] = []
 
     for _ in range(
@@ -87,6 +106,7 @@ def main():
             timer,
             event_queue,
             queue_one,
+            rand,
             simulation_params.packet_length,
             simulation_params.generation_constant,
             True,
@@ -98,6 +118,7 @@ def main():
             timer,
             event_queue,
             queue_one,
+            rand,
             simulation_params.packet_length,
             simulation_params.generation_constant,
             False,
@@ -108,6 +129,7 @@ def main():
             timer,
             event_queue,
             queue_two,
+            rand,
             simulation_params.packet_length,
             simulation_params.generation_constant,
             True,
@@ -118,9 +140,9 @@ def main():
         log.debug(f"Time: @{timer.current_time:.2f}")
 
     log.debug("queue one data:")
-    log.debug(queue_one.packets_number)
-    log.debug(queue_one.packets)
-    log.debug(queue_one.packets_passed)
+    log.debug(f"{str(queue_one.packets_number)[:100]} --clip--")
+    log.debug(f"{str(queue_one.packets)[:100]} --clip--")
+    log.debug(f"{str(queue_one.packets_passed)[:100]} --clip--")
 
     results = {}
     results["avg_queue_length_Q1"] = data_reader.show_queue_length_average(
@@ -135,11 +157,12 @@ def main():
     results["avg_load_Q1"] = data_reader.show_average_server_load_Q1(
         queue_one.packets_passed
     )
+    results["packets_passed_Q1"] = len(queue_one.packets_passed)
 
     log.debug("queue two data:")
-    log.debug(queue_two.packets_number)
-    log.debug(queue_two.packets)
-    log.debug(queue_two.packets_passed)
+    log.debug(f"{str(queue_two.packets_number)[:100]} --clip--")
+    log.debug(f"{str(queue_two.packets)[:100]} --clip--")
+    log.debug(f"{str(queue_two.packets_passed)[:100]} --clip--")
     results["avg_queue_length_Q2"] = data_reader.show_queue_length_average(
         queue_two.packets_number
     )
@@ -152,11 +175,14 @@ def main():
     results["avg_load_Q2"] = data_reader.show_average_server_load_Q2(
         queue_two.packets_passed
     )
+    results["packets_passed_Q2"] = len(queue_two.packets_passed)
     results["simulation_params"] = {
         "simulation_time": simulation_params.simulation_time,
         "packet_length": simulation_params.packet_length,
         "generation_constant": simulation_params.generation_constant,
         "queue_constant": simulation_params.queue_constant,
+        "lambda_on": simulation_params.lambda_on,
+        "lambda_off": simulation_params.lambda_off,
         "streams_number": simulation_params.streams_number,
         "dropped_streams": simulation_params.dropped_streams,
     }

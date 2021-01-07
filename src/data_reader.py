@@ -1,19 +1,29 @@
 from logger import Logger
+from numpy import average
 
 log = Logger(None)
 
 
 def show_queue_length_average(number_of_packets):
+    timestamps = []
     vals = []
 
     if len(number_of_packets) == 0:
         log.info(f"Average number of packets: NO DATA")
         return 0
 
-    for _, v in number_of_packets.items():
+    for k, v in number_of_packets.items():
+        timestamps.append(float(k))
         vals.append(v)
 
-    av = sum(vals) / len(vals)
+    vals.pop()
+    timedeltas = []
+
+    for i in range(len(timestamps) - 1):
+        timedeltas.append(timestamps[i + 1] - timestamps[i])
+
+    av = average(vals, weights=timedeltas)
+
     log.info(f"Average number of packets: {av}")
     return av
 
