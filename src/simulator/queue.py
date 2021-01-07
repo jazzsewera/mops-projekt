@@ -42,9 +42,7 @@ class Queue(object):
     def _send_packet(self, event: Event):
         if self._current_packet is not None:
             if self._queue is None:
-                self._current_packet.out_of_second_queue = (
-                    event.when - self._service_time
-                )
+                self._current_packet.out_of_second_queue = event.when - self._service_time
                 self._current_packet.out_of_system_time = event.when
                 self.packets_passed.append(self._current_packet)
             else:
@@ -53,6 +51,7 @@ class Queue(object):
 
                 if self._current_packet.is_passing:
                     self._queue.queue_packet_receiver(self._current_packet)
+                    self.log.warn("Sending packet from Q1 to Q2")
 
                 self.packets_passed.append(self._current_packet)
         else:
