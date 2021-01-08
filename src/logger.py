@@ -17,7 +17,7 @@ class Logger(object):
     @classmethod
     def set_logger_params(cls):
         LOGFORMAT = "%(log_color)s%(levelname)-5s | %(log_color)s%(message)s%(reset)s"
-        LOGLEVEL = logging.DEBUG
+        LOGLEVEL = logging.CRITICAL
         logging.getLogger().setLevel(LOGLEVEL)
         formatter = ColoredFormatter(LOGFORMAT)
         stream = logging.StreamHandler()
