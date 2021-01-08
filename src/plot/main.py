@@ -38,5 +38,6 @@ for key, value in data[0].items():
   plt.plot(range(len(val)), val)
   plt.title(names[key])
   plt.ylim([0, max(val)*1.1])
+  plt.savefig(".\out\\" + key)
   #print(val)
   i += 1
