@@ -31,29 +31,25 @@ names = {
 
 for k, _ in names.items():
     legend = []
-    for i in range(5):
+    for i in range(1, 11):
         xs = [
-            d["simulation_params"]["streams_number"]
-            for d in sorted(
-                data, key=lambda x: x["simulation_params"]["streams_number"]
-            )
-            if d["simulation_params"]["dropped_streams"] == i
+            d["simulation_params"]["lambda_on"]
+            for d in sorted(data, key=lambda x: x["simulation_params"]["lambda_on"])
+            if d["simulation_params"]["lambda_off"] == i
         ]
 
         ys = [
             d[k]
-            for d in sorted(
-                data, key=lambda x: x["simulation_params"]["streams_number"]
-            )
-            if d["simulation_params"]["dropped_streams"] == i
+            for d in sorted(data, key=lambda x: x["simulation_params"]["lambda_on"])
+            if d["simulation_params"]["lambda_off"] == i
         ]
 
         plt.plot(xs, ys)
         legend.append(
-            f"Liczba strumieni porzuconych po 1. węźle = {i}",
+            r"$\lambda_{off}$ = " f"{i}",
         )
     plt.title(names[k])
-    plt.xlabel("Liczba strumieni wpływających")
+    plt.xlabel(r"$\lambda_{on}$")
     plt.legend(legend)
     plt.savefig(f"{args.outfolder}/{k}.png")
     plt.clf()
