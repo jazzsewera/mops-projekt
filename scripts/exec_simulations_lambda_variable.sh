@@ -19,19 +19,18 @@ queue_const=1.56e-5
 streams=6
 dropped=2
 
-streams_arr={1..10}
-dropped_arr={0..9}
+parallel -j -1 "python3 ${simulator} -l ${length} -t ${simulation_time} -g ${gen_const} -q ${queue_const} -o {1} -f {2} -n ${streams} -d ${dropped}" ::: 1 2 3 4 5 6 7 8 9 10 ::: 1 2 3 4 5 6 7 8 9 10 >> ${outfile}
 
-for lambda_on in {1..10}; do
-  for lambda_off in {1..10}; do
-    python3 ${simulator} \
-      -l ${length} \
-      -t ${simulation_time} \
-      -g ${gen_const} \
-      -q ${queue_const} \
-      -o ${lambda_on} \
-      -f ${lambda_off} \
-      -n ${streams} \
-      -d ${dropped} >> ${outfile}
-  done
-done
+# for lambda_on in {1..10}; do
+  # for lambda_off in {1..10}; do
+    # python3 ${simulator} \
+      # -l ${length} \
+      # -t ${simulation_time} \
+      # -g ${gen_const} \
+      # -q ${queue_const} \
+      # -o ${lambda_on} \
+      # -f ${lambda_off} \
+      # -n ${streams} \
+      # -d ${dropped} >> ${outfile}
+  # done
+# done
