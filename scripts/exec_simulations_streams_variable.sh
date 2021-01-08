@@ -7,7 +7,7 @@ plotter="${root}/src/plot/main.py"
 
 outdir="${root}/out"
 mkdir -p ${outdir}
-outfile="${outdir}/simulation.jsonl"
+outfile="${outdir}/simulation_streams_variable.jsonl"
 
 # Simulation constants
 length=8
